@@ -1,0 +1,105 @@
+G = (N,A), directed graph
+
+Sets and subsets
+N = \{ 1, 2, \ldots, n \}, the node set
+N_{D}, departing day-care center node
+N_{A}, arrival day-care center node
+N_{C}, all task nodes
+N_{B}, bedridden-type task nodes
+N_{S}, semi-dependent-type task nodes
+N_{LD}, lunch distribution task
+N_{LB}, lunch break task
+A = {(i,j) | i \not= j, i \in N \setminus {n}, j \in N \setminus {1} }, the arc set
+A_{D}, valid arcs departing from the day-care center
+A_{A}, valid arcs arriving to the day-care center
+A_{C}, valid arcs between tasks
+A_{V}, all valid arcs
+V, All teams
+V_{S}, single teams
+V_{D}, double teams
+R_{i}, subset of tasks all corresponding to patient i
+S, set formed by the subsets R_{i}
+
+Parameters
+a_{i}, earlier time of arrival to a node
+b_{i}, later time of arrival to a node
+H, maximum length allowed for a route
+W_{i}, duration of service of task i per caregiver
+T_{ij}, traveling time between two nodes
+L_{ij}, schedule feasibility measure
+G_{i}, temporal offset between the arrival of two single teams to a bedridden patient i
+CgT, maximum number of teams to visit any patient
+CgA, number of caregivers available
+CgR_{i}, number of caregivers required for task i
+Cg_{k}, number of caregivers in team k
+Q, number of vehicles available
+
+Variables
+x_{ijk} \in {0,1}, 1 if (i,j) is traversed by team k; 0 otherwise
+t_{ik}, arrival time to node i by team k
+\delta_{i}, auxiliary variable to assess schedule feasibility after synchronizing at i
+d_{ik} \in {0,1}, 1 if task i is performed by team k; 0 otherwise
+y_{R_{i}k} \in {0,1}, 1 if team k performs at least one task of patient task set R_{i}; 0 otherwise
+
+
+\begin{align} 
+\label{fo_con1}
+\min & \sum_{k in V} \sum{(i,j) \in A_{V}} (T_{(i,j)} + W_i) Cg_{k} x_{ijk} \\ 
+
+\label{route_con2}
+& \sum_{k \in V} \sum_{i: (i,j) \in A_{V}} Cg_k x_{ijk} \geq CgR_{i} \mbox{ for } i \in N{C} \\ 
+\label{route_con3}
+& \sum_{j:(i,j) \in A_{D} x_{ijk} \leq 1 \mbox{ for } k \in V, \ i \in N_{D} \\ 
+\label{route_con4}
+& \sum_{j:(i,j) \in A_{D} x_{ijk} - \sum_{i:(j,i) \in A_{A} x_{ijk} = 0 \mbox{ for } k \in V \\ 
+\label{route_con5}
+& \sum_{i:(i,j) \in A_{V} x_{ijk} - \sum_{i:(j,i) \in A_{A} x_{jik} = 0 \mbox{ for } k \in V, \ j \in N_{C} \\ 
+
+\label{sched_con6}
+& t_{ik} - t_{il} \leq G_i + H \left\( 2 - \sum_{j:(i,j) \in A_{V}} - \sum_{j:(i,j) \in A_{V}} \right\) \mbox{ for } i \in N_{B}, \ k,l \in V_{S}, \ k \not= l \\ 
+\label{sched_con7} 
+& \delta_{i} \geq t_{ik} \mbox{ for } k \in V_{S}, i \in N_{B} \\ 
+\label{sched_con8}
+& \delta_{i} + (T_{ij} + W_{i}) x_{ijk} \leq t_{jk} (1 - x_{ijk}) \mbox{ for } i \in N_{B}, \ k \in V_{S}, \ (i,j) \in A_{V} \\ 
+\label{sched_con9}
+& t_{ik} + (T_{ij} + W_{i}) x_{ijk} \leq t_{jk} + b_{i} (1 - x_{ijk}) \mbox{ for } i \notin N_{B}, k \notin V_{S}, \ (i,j) \in A_{V} \\ 
+\label{sched_con10}
+& a_{i} \sum_{j:(i,j) \in A_{V}} x_{ijk} \leq t_{ik}, \mbox{ for } k \in V, \ i \in N_{C} \\ 
+\label{sched_con11}
+& t_{ik} \leq b_{i} \sum_{j:(i,j) \in A_{V}} x_{ijk} \mbox{ for } k \in V, \ i \in N_{C} \\ 
+\label{sched_con12}
+& t_{ik} - t_{jk} \leq H \mbox{ for } k \in V, \ i \in N_{D}, \ j \in N_{A}, \\ 
+\label{sched_con13}
+& a_{i} \leq t_{ik} \mbox{ for } k \in V, \ i \in N_{D} \cap N_{A} \\ 
+\label{sched_con14}
+& t_{ik} \leq b_{i} \mbox{ for } k \in V, \ i \in N_{D} \cap N_{A} \\ 
+\label{sched_con15}
+& b_{p} \sum_{j:(i,j) \in A_{D}} x_{ijk} \geq t_{pk} \mbox{ for } k \in V, \ p \in N_{A} \\
+
+\label{cont_route_con16}
+& \sum_{j:(i,j) \in A_{V}} = d_{ik} \mbox{ for } k \in V, \ i \in N_{B} \cap N_{S} \\
+\label{cont_route_con17}
+& \sum_{i \in R_{j}} d_{ik} \leq |R_{j}| y_{R_{j}k} \mbox{ for } k \in V, \ R_{j} \subseteq S \\
+\label{cont_route_con18}
+& \sum_{k \in V} y_{R_{j}k} \leq CgT \mbox{ for } R_{j} \in S \\
+
+\labe{lunch_break_con19}
+& \sum_{i:(i,j) \in A_{V}} x_{ipk} =  \sum_{j:(i,j) \in A_{D}} x_{ijk} \mbox{ for } k \in V, \ p \in N_{LB} \\
+
+\labe{bound_team_con20}
+& \sum_{k \in V} \sum_{j:(i,j) \in A_{D}} x_{ijk} \leq Q \mbox{ for } i \in N_{D}
+\labe{team_viable_con21}
+& \sum_{k \in V} \sum_{j:(i,j) \in A_{D}} Cg_{k} x_{ijk} \leq CgA \mbox{ for } i \in N_{D}
+
+\labe{domain_con22}
+& x_{ijk} \in {0,1} \mbox{ for } k \in V, \ (i,j) \in A \\
+\labe{domain_con23}
+& t_{ik} \in \mathbb{R}_{+} \mbox{ for } k \in V, \ i \in N \\
+\labe{domain_con24}
+& delta_{i} \in \mathbb{R}_{+} \mbox{ for } i \in N \\
+\labe{domain_con25}
+& d_{ik} \in {0,1} \mbox{ for } i \in N, \ k \in V \\
+\labe{domain_con26}
+& y_{rk} \in {0,1} \mbox{ for } r \in S, \ k \in V \\
+
+\end{align}
