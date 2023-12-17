@@ -3,7 +3,7 @@
 method_=mip
 form_=cordeau0
 
-mkdir -p ../result
+mkdir -p /home/jossian/repository/hcare_problem/result
 mkdir -p /home/jossian/Downloads/develop/report/hcarep/${form_}
 
 #a2: 16 20 24
@@ -13,7 +13,7 @@ for veh_ in a2
 do
     for no_ in 16 20 24 
     do
-        python3 darp.py ../instances/darp_bc/${veh_}-${no_}.txt ${method_} ${veh_}_${no_} ${form_} \
-        >> /home/jossian/Downloads/develop/report/darp/${form_}/${method_}_${veh_}_${no_}_${form_}.txt
+        python3 hcarep.py ../instances/darp_bc/${veh_}-${no_}.txt ${method_} ${veh_}_${no_} ${form_} \
+        >> /home/jossian/Downloads/develop/report/hcarep/${form_}/${method_}_${veh_}_${no_}_${form_}.txt
     done
 done

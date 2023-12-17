@@ -19,10 +19,7 @@ from itertools import combinations
 import sys
 from datetime import datetime, date
 
-import formGaul as gaul
-import formCordeau0 as cordeau0
-import formCordeau1 as cordeau1
-import formCordeau2 as cordeau2
+import formCordeau as cordeau
 
 if __name__ == "__main__":
 
@@ -35,14 +32,10 @@ if __name__ == "__main__":
         form_ = sys.argv[4]
         
 
-    out_path_ = Path(f"../result")
+    out_path_ = Path(f"/home/jossian/repository/hcare_problem/result")
     instance_ = f"{method_}_{form_}_{inst_}.txt"
 	
-    if form_ == "cordeau0":
-        cordeau0.form_cordeau(method_,data_,out_path_,instance_,inst_,form_)
-    elif form_ == "cordeau1":
-        cordeau1.form_cordeau(method_,data_,out_path_,instance_)
-    elif form_ == "cordeau2":
-        cordeau2.form_cordeau(method_,data_,out_path_,instance_)
+    if form_ == "cordeau":
+        cordeau.form_cordeau(method_,data_,out_path_,instance_,inst_,form_)
     else:
     	print("parameters errado!")
